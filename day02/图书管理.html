@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <script src="./vue.js"></script>
+    <style>
+        #app {
+            width: 500px;
+            margin: auto;
+            text-align: center;
+        }
+
+        table {
+            width: 100%;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div id="app">
+        <h1>图书管理</h1>
+        <label>编号：</label><input type="text" v-model.number="id">
+        <label>名称：</label><input type="text" v-model="name">
+        <button @click="add">提交</button>
+        <p>图书总数：{{books.length}}</p>
+        <table border="1">
+            <tr>
+                <th>编号</th>
+                <th>书名</th>
+                <th>时间</th>
+                <th>操作</th>
+            </tr>
+            <tr v-for="item in books">
+                <td>{{item.id}}</td>
+                <td>{{item.name}}</td>
+                <td>{{item.time}}</td>
+                <td>
+                    <button>编辑</button>
+                    <button>删除</button>
+                </td>
+            </tr>
+        </table>
+
+    </div>
+    <script>
+        new Vue({
+            el: '#app',
+            data: {
+                id: '',
+                name: '',
+                books: [
+                    {
+                        id: 1,
+                        name: "三国演义",
+                        time: new Date().toLocaleString(),
+                    },
+                    {
+                        id: 2,
+                        name: "水浒传",
+                        time: new Date().toLocaleString(),
+                    },
+                    {
+                        id: 3,
+                        name: "红楼梦",
+                        time: new Date().toLocaleString(),
+                    },
+                    {
+                        id: 4,
+                        name: "西游记",
+                        time: new Date().toLocaleString(),
+                    },
+                ],
+
+            },
+            methods: {
+                // 添加图书
+                add() {
+                    if (!this.id || this.name.trim().length === 0) { // 非空验证
+                        alert('猪')
+                        return ;
+                    }
+
+                    // 判断添加的书籍id是否重复  result为true时表示重复了
+                    let result = this.books.some(item => {
+                        return item.id === this.id
+                    })
+
+                    console.log(result)
+
+                    let obj = {};
+                    obj.id = this.id
+                    obj.name = this.name
+                    obj.time = new Date().toLocaleString()
+
+                    this.books.push(obj)
+
+                    // 清空输入框中的数据
+                    this.id = '';
+                    this.name = '';
+
+                },
+            }
+        })
+    </script>
+</body>
+
+</html>
