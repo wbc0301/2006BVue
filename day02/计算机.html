@@ -17,7 +17,8 @@
             <option value="*">*</option>
             <option value="/">/</option>
         </select>
-        <input type="text" v-model.number="num2">
+        <input type="text" v-model.number="num2" @keyup.enter="handler">
+        <!-- <input type="text" v-model.number="num2" @keyup.13="handler"> -->
         <!-- <button v-on:click="handler">=</button> -->
         <button @click="handler">=</button>
         <span>{{result}}</span>
