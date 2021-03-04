@@ -1,6 +1,7 @@
 <template>
 	<div>
 		<button @click="handler">我是按钮2</button>
+        <div>{{num}}</div>
 	</div>
 </template>
 
@@ -8,7 +9,8 @@
 export default {
 	data() {
 		return {
-			name: '我是bt2'
+			name: '我是bt2',
+            num: 999,
 		}
 	},
 	methods: {
