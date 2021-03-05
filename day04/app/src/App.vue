@@ -1,12 +1,19 @@
 <template>
 	<div id="app">
-		<div class="top">
+		<!-- 不使用子组件 -->
+		<!-- <div class="top">
 			<span>ToDoList</span>
 			<input type="text" v-model="str" @keyup.enter="add" />
-		</div>
+		</div>-->
+
+
+		<!-- 使用子组件 同时传递数据，监听自定义事件 --> 
+        <!-- add函数内部逻辑要做相应变化 -->
+		<top :str="str" @add="add"></top>
+
 
 		<!-- 正在进行 -->
-		<div class="doing">
+		<div>
 			<h2>正在进行 {{doingList.length}}</h2>
 			<ul>
 				<li v-for="item in doingList" :key="item.id">
@@ -21,7 +28,7 @@
 		</div>
 
 		<!-- 已经完成 -->
-		<div class="done">
+		<div>
 			<h2>已经完成 {{doneList.length}}</h2>
 			<ul>
 				<li v-for="item in doneList" :key="item.id">
@@ -34,13 +41,17 @@
 				</li>
 			</ul>
 		</div>
+
 		<button @click="clear">clear</button>
 	</div>
 </template>
 
 <script>
+import top from './components/top';
+
 export default {
 	name: 'App', // 当前组件的名字
+	components: { top, },
 	data() {
 		return {
 			str: '', // 用户输入的值
@@ -56,27 +67,33 @@ export default {
 		doingList() {
 			console.log(123)
 			let arr = this.list.filter(item => {
-				// return item.done === false
-				return !item.done
+				return item.done === false
+				// return !item.done
 			})
 			return arr
 		},
 		doneList() {
 			return this.list.filter(item => {
-				// return item.done === false
-				return item.done
+				return item.done === true
+				// return item.done
 			})
 		},
 	},
 	methods: {
-		add() { // 添加
-			this.list.push({
-				id: Math.random(),
-				str: this.str,
-				done: false,
-				edit: false,
-			})
-			this.str = '';
+		add(e) { // 添加
+			console.log(e)
+			this.str = e.target.value;
+			if (e.keyCode == 13) {
+                let obj = {
+                    id: Math.random(),
+                    str: this.str,  // 该条代办显示的内容
+                    done: false,  // false：正在进行  ture:已经完成
+                    edit: false,  // false：没有在编辑 ture:正在编辑中
+                }
+                this.list.push(obj)
+                this.str = '';
+			}
+
 		},
 		del(id) { // 删除
 			// es6
@@ -100,7 +117,6 @@ export default {
 			this.list.forEach(item => {
 				if (item.id === id) {
 					item.edit = true;
-					// this.editStr = item.str;
 				} else {
 					item.edit = false;
 				}
@@ -112,6 +128,42 @@ export default {
 			})
 		}
 	},
+	watch: {
+		// 监听 监听数据的变化  函数名就是要监听的数据  数据一变 函数就会被调用
+		// list(newValue, oldValue) {
+		//     // 保存数据 
+		//     localStorage.aa = JSON.stringify(newValue);
+		// }
+
+		list: {
+			// 数据变化后要调用的函数 必须是：handler
+			handler: function (newValue, oldValue) {
+				// 保存数据 
+				localStorage.aa = JSON.stringify(this.list);
+			},
+			deep: true, // 是否开启深度监听
+		}
+	},
+
+	// 生命周期函数   不常用
+	beforeCreate() {
+		console.log('beforeCreate:', this.list)
+	},
+
+
+	// created 在this完成之后  created里边可以访问到this上边的任何属性
+	created() {  // 常用 还没有dom
+		console.log('created:', this.list)
+		this.list = JSON.parse(localStorage.aa || '[]')
+		console.log('created--dom:', document.getElementsByClassName('top')[0])
+	},
+
+	// 在页面挂载之后调用  可以操作dom
+	mounted() { // 常用
+		console.log('mounted:', this.list)
+		console.log('mounted--dom:', document.getElementsByClassName('top')[0])
+	},
+
 }
 </script>
 
